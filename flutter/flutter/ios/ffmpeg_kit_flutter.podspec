@@ -20,7 +20,17 @@ Pod::Spec.new do |s|
   s.dependency          'Flutter'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
 
-  s.dependency 'ffmpeg-kit-ios-full', :podspec => 'https://raw.githubusercontent.com/luthviar/ffmpeg-kit-ios-full/main/ffmpeg-kit-ios-full.podspec'
-
-  s.ios.deployment_target = '14.0'
+  s.subspec 'full' do |ss|
+    ss.source_files        = 'Classes/**/*'
+    ss.public_header_files = 'Classes/**/*.h'
+    
+    # 使用 prepare_command 下载 xcframework
+    ss.prepare_command = <<-CMD
+      curl -L https://github.com/luthviar/ffmpeg-kit-ios-full/releases/download/6.0/ffmpeg-kit-ios-full.zip -o ffmpeg-kit.zip
+      unzip -o ffmpeg-kit.zip
+      rm ffmpeg-kit.zip
+    CMD
+    
+    ss.vendored_frameworks = 'ffmpeg-kit-ios-full/*.xcframework'
+  end
 end
